@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  hadoop:
+    build:
+      context: ./hadoop
+    container_name: hadoop
+    hostname: hadoop
+    ports:
+      - "9870:9870"   # NameNode UI
+      - "9864:9864"   # DataNode UI
+      - "8088:8088"   # YARN RM UI
+      - "9000:9000"   # HDFS
+      - "22:22"
+    networks:
+      - bigdata
+    volumes:
+      - hdfs:/usr/local/hadoop/hadoop_storage
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3306:3306"
+    networks:
+      - bigdata
+
+  sqoop:
+    build:
+      context: ./sqoop
+    container_name: sqoop
+    depends_on:
+      - hadoop
+      - mysql
+    networks:
+      - bigdata
+
+  flume:
+    build:
+      context: ./flume
+    container_name: flume
+    depends_on:
+      - hadoop
+    networks:
+      - bigdata
+
+networks:
+  bigdata:
+    driver: bridge
+
+volumes:
+  hdfs:
