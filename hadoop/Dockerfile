@@ -15,7 +15,7 @@ RUN wget -q https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSIO
     && mv hadoop-${HADOOP_VERSION} $HADOOP_HOME \
     && rm hadoop-${HADOOP_VERSION}.tar.gz
 
-# 🔥 JAVA_HOME correcto (clave)
+# JAVA_HOME
 RUN JAVA_HOME_REAL=$(readlink -f /usr/bin/java | sed 's:/bin/java::') && \
     echo "export JAVA_HOME=$JAVA_HOME_REAL" >> $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 

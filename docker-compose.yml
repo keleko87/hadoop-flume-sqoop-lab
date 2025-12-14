@@ -1,12 +1,13 @@
 version: "3.9"
 
 services:
-
+  # SERVICIO 1: HADOOP
   hadoop:
     build:
       context: ./hadoop
     container_name: hadoop
     hostname: hadoop
+    # Mapeo de puertos para acceder a las interfaces web (opcional)
     ports:
       - "9870:9870"   # NameNode UI
       - "9864:9864"   # DataNode UI
@@ -16,9 +17,13 @@ services:
     networks:
       - bigdata
     volumes:
+      # Montar un volumen para persistir los datos HDFS
       - hdfs:/usr/local/hadoop/hadoop_storage
 
+  # SERVICIO 2: BASE DE DATOS MySQL
   mysql:
+    # si no funciona  mysql:8 poner:
+    # image: mariadb:10.6
     image: mysql:8
     container_name: mysql
     environment:
@@ -36,6 +41,9 @@ services:
     depends_on:
       - hadoop
       - mysql
+    environment:
+      # Pasar JAVA_HOME como variable de entorno en docker-compose
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     networks:
       - bigdata
 
@@ -45,9 +53,21 @@ services:
     container_name: flume
     depends_on:
       - hadoop
+    environment:
+      # Pasar JAVA_HOME como variable de entorno en docker-compose
+      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     networks:
       - bigdata
+    volumes:
+      - ./flume/conf:/opt/flume/conf                      # flume.conf desde el host
+      - ./flume/logs:/opt/flume/logs                      # logs persistentes
+      #- ./flume/logs:/opt/logs                            
+    command: >
+      bash -c "
+        flume-ng agent --conf /opt/flume/conf --conf-file /opt/flume/conf/flume.conf --name agent1 -Dflume.root.logger=INFO,console
+      "
 
+# VOLÚMENES Y REDES
 networks:
   bigdata:
     driver: bridge
