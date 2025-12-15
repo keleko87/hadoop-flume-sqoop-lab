@@ -7,8 +7,9 @@ ENV HADOOP_HOME=/usr/local/hadoop
 ENV SQOOP_HOME=/usr/local/sqoop
 ENV PATH=$PATH:$HADOOP_HOME/bin:$SQOOP_HOME/bin
 
+# Instalar Java, wget, curl, ssh y netcat
 RUN apt-get update && apt-get install -y \
-    openjdk-8-jdk wget curl ssh rsync && \
+    openjdk-8-jdk wget curl ssh rsync netcat && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Hadoop (cliente)
@@ -31,14 +32,18 @@ RUN wget -q https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP
 RUN wget -q https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar && \
     mv mysql-connector-java-5.1.49.jar $SQOOP_HOME/lib/
 
-# JAVA_HOME
-# En sqoop/Dockerfile (Usando la ruta dinámica)
-#RUN JAVA_HOME_REAL=$(readlink -f /usr/bin/java | sed 's:/bin/java::') && \
-  #   echo "export JAVA_HOME=$JAVA_HOME_REAL" >> $SQOOP_HOME/bin/configure-sqoop
-
-RUN mkdir -p $SQOOP_HOME/conf && \
-    JAVA_HOME_REAL=$(readlink -f /usr/bin/java | sed 's:/bin/java::') && \
+# JAVA_HOME SOLO para Sqoop
+RUN JAVA_HOME_REAL=$(readlink -f /usr/bin/java | sed 's:/bin/java::') && \
+    mkdir -p $SQOOP_HOME/conf && \
     echo "export JAVA_HOME=$JAVA_HOME_REAL" > $SQOOP_HOME/conf/sqoop-env.sh
-    
+
+# Permanencia de variables en sesiones interactivas
+# El archivo .bashrc se carga cuando se inicia un shell interactivo (como docker exec -it)
+RUN echo "" >> /root/.bashrc && \
+    echo "# Cargar variables de entorno de Sqoop al iniciar el shell" >> /root/.bashrc && \
+    echo "source \$SQOOP_HOME/conf/sqoop-env.sh" >> /root/.bashrc
+# IMPORTANTE: El carácter '$' debe ser escapado como '\$' para que el valor 
+# no se evalúe durante la construcción, sino durante la ejecución del shell.
+
 # Mantener contenedor vivo. Sqoop NO debe arrancar como servicio. Es un CLI - batch
 CMD ["tail", "-f", "/dev/null"]

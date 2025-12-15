@@ -11,8 +11,8 @@ services:
     ports:
       - "9870:9870"   # NameNode UI
       - "9864:9864"   # DataNode UI
-      - "8088:8088"   # YARN RM UI
-      - "9000:9000"   # Puerto para HDFS (fs.defaultFS)
+      - "8032:8032"   # ResourceManager
+      - "9000:9000"   # HDFS
       - "22:22"
     networks:
       - bigdata
@@ -22,8 +22,6 @@ services:
 
   # SERVICIO 2: BASE DE DATOS MySQL
   mysql:
-    # si no funciona  mysql:8 poner:
-    # image: mariadb:10.6
     image: mysql:8
     container_name: mysql
     environment:
@@ -43,12 +41,24 @@ services:
       - hadoop
       - mysql
     environment:
-      # Pasar JAVA_HOME como variable de entorno en docker-compose
       - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+      - HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
     networks:
       - bigdata
     volumes:
       - ./hadoop/conf:/usr/local/hadoop/etc/hadoop
+
+  flume:
+    build:
+      context: ./flume
+    container_name: flume
+    depends_on:
+      - hadoop
+    networks:
+      - bigdata
+    volumes:
+      - ./flume/flume.conf:/opt/flume/conf/flume.conf
+      - ./flume/logs:/opt/logs
 
 # VOLÚMENES Y REDES
 networks:

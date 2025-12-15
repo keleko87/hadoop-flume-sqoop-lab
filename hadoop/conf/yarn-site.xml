@@ -1,14 +1,23 @@
 <configuration>
   <property>
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
+      <name>yarn.resourcemanager.bind-host</name>
+      <value>0.0.0.0</value>
+      <description>El host donde debe enlazar el ResourceManager.</description>
   </property>
   <property>
     <name>yarn.resourcemanager.hostname</name>
     <value>hadoop</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.webapp.address</name>
-    <value>hadoop:8088</value>
+      <name>yarn.resourcemanager.address</name>
+      <value>hadoop:8032</value> 
+  </property>
+  <property>
+      <name>yarn.resourcemanager.scheduler.address</name>
+      <value>hadoop:8030</value>
+  </property>
+  <property>
+      <name>yarn.resourcemanager.webapp.address</name>
+      <value>hadoop:8088</value>
   </property>
 </configuration>

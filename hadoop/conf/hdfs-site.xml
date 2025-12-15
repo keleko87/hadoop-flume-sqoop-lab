@@ -3,15 +3,25 @@
     <name>dfs.replication</name>
     <value>1</value>
   </property>
-
+  <!-- Directorio de almacenamiento del NameNode -->
   <property>
-    <name>dfs.namenode.name.dir</name>
-    <value>file:/usr/local/hadoop/hadoop_storage/hdfs/namenode</value>
+      <name>dfs.namenode.name.dir</name>
+      <value>file:/usr/local/hadoop/hadoop_storage/hdfs/namenode</value>
+  </property>
+  <!-- Directorio de almacenamiento del DataNode -->
+  <property>
+      <name>dfs.datanode.data.dir</name>
+      <value>file:/usr/local/hadoop/hadoop_storage/hdfs/datanode</value>
   </property>
 
   <property>
-    <name>dfs.datanode.data.dir</name>
-    <value>file:/usr/local/hadoop/hadoop_storage/hdfs/datanode</value>
+    <name>dfs.client.use.datanode.hostname</name>
+    <value>true</value>
+  </property>
+  
+  <property>
+    <name>dfs.datanode.use.datanode.hostname</name>
+    <value>true</value>
   </property>
 
   <!-- Permitir que el NameNode de Hadoop escuche en todas las interfaces -->

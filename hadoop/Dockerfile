@@ -7,7 +7,7 @@ ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HADOOP_HOME/sbin
 
 # 1. INSTALACIÓN DE DEPENDENCIAS (Java 8, SSH, PDSH y netcat-openbsd)
 RUN apt-get update && apt-get install -y \
-    openjdk-8-jdk openssh-server pdsh wget nano curl netcat-openbsd vim && \
+    openjdk-8-jdk openssh-server pdsh wget nano curl netcat-openbsd iproute2 vim && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 2. DESCARGA Y EXTRACCIÓN DE HADOOP
@@ -43,8 +43,12 @@ COPY ./conf/yarn-site.xml $HADOOP_HOME/etc/hadoop/
 COPY ./conf/mapred-site.xml $HADOOP_HOME/etc/hadoop/
 
 # 6. CREAR DIRECTORIOS DE HDFS
+# RUN mkdir -p $HADOOP_HOME/hadoop_storage/hdfs/namenode \
+#              $HADOOP_HOME/hadoop_storage/hdfs/datanode
 RUN mkdir -p $HADOOP_HOME/hadoop_storage/hdfs/namenode \
-             $HADOOP_HOME/hadoop_storage/hdfs/datanode
+             $HADOOP_HOME/hadoop_storage/hdfs/datanode \
+             $HADOOP_HOME/hadoop_storage/tmp && \
+    chmod -R 755 $HADOOP_HOME/hadoop_storage
 
 # 7. COPIAR SCRIPT DE INICIO (Maneja la lógica de hosts, espera SSH y arranque de HDFS)
 COPY ./start-hadoop.sh /usr/local/bin/start-hadoop.sh
