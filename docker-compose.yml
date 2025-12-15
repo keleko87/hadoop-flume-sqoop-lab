@@ -12,7 +12,7 @@ services:
       - "9870:9870"   # NameNode UI
       - "9864:9864"   # DataNode UI
       - "8088:8088"   # YARN RM UI
-      - "9000:9000"   # HDFS
+      - "9000:9000"   # Puerto para HDFS (fs.defaultFS)
       - "22:22"
     networks:
       - bigdata
@@ -34,6 +34,7 @@ services:
     networks:
       - bigdata
 
+  # SERVICIO 3: SQOOP
   sqoop:
     build:
       context: ./sqoop
@@ -46,26 +47,8 @@ services:
       - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     networks:
       - bigdata
-
-  flume:
-    build:
-      context: ./flume
-    container_name: flume
-    depends_on:
-      - hadoop
-    environment:
-      # Pasar JAVA_HOME como variable de entorno en docker-compose
-      - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-    networks:
-      - bigdata
     volumes:
-      - ./flume/conf:/opt/flume/conf                      # flume.conf desde el host
-      - ./flume/logs:/opt/flume/logs                      # logs persistentes
-      #- ./flume/logs:/opt/logs                            
-    command: >
-      bash -c "
-        flume-ng agent --conf /opt/flume/conf --conf-file /opt/flume/conf/flume.conf --name agent1 -Dflume.root.logger=INFO,console
-      "
+      - ./hadoop/conf:/usr/local/hadoop/etc/hadoop
 
 # VOLÚMENES Y REDES
 networks:

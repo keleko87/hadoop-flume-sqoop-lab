@@ -3,12 +3,24 @@
     <name>dfs.replication</name>
     <value>1</value>
   </property>
+
   <property>
     <name>dfs.namenode.name.dir</name>
     <value>file:/usr/local/hadoop/hadoop_storage/hdfs/namenode</value>
   </property>
+
   <property>
     <name>dfs.datanode.data.dir</name>
     <value>file:/usr/local/hadoop/hadoop_storage/hdfs/datanode</value>
+  </property>
+
+  <!-- Permitir que el NameNode de Hadoop escuche en todas las interfaces -->
+  <property>
+    <name>dfs.namenode.rpc-bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
+  <property>
+    <name>dfs.namenode.servicerpc-bind-host</name>
+    <value>0.0.0.0</value>
   </property>
 </configuration>
