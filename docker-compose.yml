@@ -19,6 +19,8 @@ services:
     volumes:
       # Montar un volumen para persistir los datos HDFS
       - hdfs:/usr/local/hadoop/hadoop_storage
+      # Mapea el directorio interno de HDFS al directorio local './hadoop_storage'
+      - ./hadoop_storage:/usr/local/hadoop/hadoop_storage
 
   # SERVICIO 2: BASE DE DATOS MySQL
   mysql:
