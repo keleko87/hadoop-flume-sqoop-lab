@@ -20,19 +20,6 @@ while ! nc -z localhost 22; do
 done
 echo "SSH listo."
 
-# CONFIGURACIÓN DE HOSTS Y SSH (Permanencia asegurada en cada arranque)
-# a) Inyección del host (necesario para la conexión SSH interna)
-# if ! grep -q "127.0.0.1 hadoop" /etc/hosts; then
-#     echo "127.0.0.1 hadoop" >> /etc/hosts
-# fi
-
-# a) Obtener la IP real del contenedor para el hostname 'hadoop'
-# Esto evita que se registre como 127.0.0.1 (localhost)
-# CONTAINER_IP=$(hostname -i)
-# if ! grep -q "$CONTAINER_IP hadoop" /etc/hosts; then
-#     echo "$CONTAINER_IP hadoop" >> /etc/hosts
-# fi
-
 # b) Configuración de SSH para evitar prompts de autenticidad
 echo "Configurando SSH para conexión sin claves..."
 mkdir -p ~/.ssh

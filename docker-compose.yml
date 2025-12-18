@@ -50,17 +50,36 @@ services:
     volumes:
       - ./hadoop/conf:/usr/local/hadoop/etc/hadoop
 
+  # SERVICIO 4: NGNIX: Servidor web de ejemplo para recolectar logs   
+  web_server:
+    image: nginx:latest
+    container_name: web_server
+    ports:
+      - "8080:80"
+    volumes:
+      - web_logs:/var/log/nginx  # Ruta donde guardará los logs
+      - ./web_server/nginx-custom.conf:/etc/nginx/conf.d/default.conf:ro # Archivo de configuración para Nginx
+    networks:
+      - bigdata
+
+  # SERVICIO 5: FLUME (Agente flume)
   flume:
-    build:
-      context: ./flume
+    image: bde2020/flume:latest
     container_name: flume
+    # Forzar la plataforma para evitar el error de arquitectura
+    platform: linux/amd64 
+    environment:
+      - FLUME_AGENT_NAME=agent1
+    volumes:
+      - ./flume/agent-config:/opt/flume/agent-config
+      - ./flume/log4j.properties:/opt/flume/conf/log4j.properties
+      - web_logs:/var/log/nginx:ro # :ro = Read Only: permite que Flume lea los logs pero garantiza que no pueda modificarlos/borrarlos (por error). 
+    # Usamos la ruta exacta donde está almacenada la imagen Flume
+    command: /usr/local/apache-flume/apache-flume-1.7.0-SNAPSHOT-bin/bin/flume-ng agent -n agent1 -c /opt/flume/conf -f /opt/flume/agent-config/flume-to-hdfs.conf -Dflume.root.logger=INFO,console
     depends_on:
       - hadoop
     networks:
       - bigdata
-    volumes:
-      - ./flume/flume.conf:/opt/flume/conf/flume.conf
-      - ./flume/logs:/opt/logs
 
 # VOLÚMENES Y REDES
 networks:
@@ -68,4 +87,5 @@ networks:
     driver: bridge
 
 volumes:
-  hdfs:
+  hdfs: # Volumen compartido para almacenamiento
+  web_logs:  # Volumen compartido para los logs
