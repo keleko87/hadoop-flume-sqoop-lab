@@ -55,7 +55,7 @@ services:
     image: nginx:latest
     container_name: web_server
     ports:
-      - "8080:80"
+      - "8888:80"
     volumes:
       - web_logs:/var/log/nginx  # Ruta donde guardará los logs
       - ./web_server/nginx-custom.conf:/etc/nginx/conf.d/default.conf:ro # Archivo de configuración para Nginx
@@ -64,18 +64,21 @@ services:
 
   # SERVICIO 5: FLUME (Agente flume)
   flume:
-    image: bde2020/flume:latest
+    build:
+      context: ./flume
     container_name: flume
     # Forzar la plataforma para evitar el error de arquitectura
     platform: linux/amd64 
     environment:
       - FLUME_AGENT_NAME=agent1
+      - HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
     volumes:
       - ./flume/agent-config:/opt/flume/agent-config
       - ./flume/log4j.properties:/opt/flume/conf/log4j.properties
+      - ./hadoop/conf:/usr/local/hadoop/etc/hadoop:ro
       - web_logs:/var/log/nginx:ro # :ro = Read Only: permite que Flume lea los logs pero garantiza que no pueda modificarlos/borrarlos (por error). 
-    # Usamos la ruta exacta donde está almacenada la imagen Flume
-    command: /usr/local/apache-flume/apache-flume-1.7.0-SNAPSHOT-bin/bin/flume-ng agent -n agent1 -c /opt/flume/conf -f /opt/flume/agent-config/flume-to-hdfs.conf -Dflume.root.logger=INFO,console
+    # Usamos la ruta donde está instalado Flume en esta imagen
+    command: flume-ng agent -n agent1 -c /opt/flume/conf -f /opt/flume/agent-config/flume-to-hdfs.conf -Dflume.root.logger=INFO,console
     depends_on:
       - hadoop
     networks:

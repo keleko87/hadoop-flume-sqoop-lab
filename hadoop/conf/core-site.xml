@@ -4,10 +4,4 @@
         <name>fs.defaultFS</name>
         <value>hdfs://hadoop:9000</value>
     </property>
-
-    <!-- Directorio temporal para Hadoop -->
-    <!-- <property>
-        <name>hadoop.tmp.dir</name>
-        <value>/usr/local/hadoop/hadoop_storage/tmp</value>
-    </property> -->
 </configuration>

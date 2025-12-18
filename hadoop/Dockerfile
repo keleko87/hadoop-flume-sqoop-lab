@@ -44,8 +44,6 @@ COPY ./conf/yarn-site.xml $HADOOP_HOME/etc/hadoop/
 COPY ./conf/mapred-site.xml $HADOOP_HOME/etc/hadoop/
 
 # 6. CREAR DIRECTORIOS DE HDFS
-# RUN mkdir -p $HADOOP_HOME/hadoop_storage/hdfs/namenode \
-#              $HADOOP_HOME/hadoop_storage/hdfs/datanode
 RUN mkdir -p $HADOOP_HOME/hadoop_storage/hdfs/namenode \
              $HADOOP_HOME/hadoop_storage/hdfs/datanode \
              $HADOOP_HOME/hadoop_storage/tmp && \

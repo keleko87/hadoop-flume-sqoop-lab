@@ -1,9 +1,7 @@
 <configuration>
-  <!-- Usar YARN -->
+  <!-- Usar YARN para MapReduce -->
   <property>
     <name>mapreduce.framework.name</name>
     <value>yarn</value>
   </property>
-
-
 </configuration>
