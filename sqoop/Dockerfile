@@ -37,13 +37,6 @@ RUN JAVA_HOME_REAL=$(readlink -f /usr/bin/java | sed 's:/bin/java::') && \
     mkdir -p $SQOOP_HOME/conf && \
     echo "export JAVA_HOME=$JAVA_HOME_REAL" > $SQOOP_HOME/conf/sqoop-env.sh
 
-# Permanencia de variables en sesiones interactivas
-# El archivo .bashrc se carga cuando se inicia un shell interactivo (como docker exec -it)
-RUN echo "" >> /root/.bashrc && \
-    echo "# Cargar variables de entorno de Sqoop al iniciar el shell" >> /root/.bashrc && \
-    echo "source \$SQOOP_HOME/conf/sqoop-env.sh" >> /root/.bashrc
-# IMPORTANTE: El carácter '$' debe ser escapado como '\$' para que el valor 
-# no se evalúe durante la construcción, sino durante la ejecución del shell.
 
 # Mantener contenedor vivo. Sqoop NO debe arrancar como servicio. Es un CLI - batch
 CMD ["tail", "-f", "/dev/null"]
